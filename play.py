@@ -50,16 +50,19 @@ if __name__ == "__main__":
 
 
     # Change these variable 
-    game = TicTacMo()
-    #ckpt = 15
-    #nn = NeuralNetwork(game, SENet, cuda=True)
-    #nn.load(ckpt)
+    #game = TicTacMo()
+    game = TicTacToe()
+    ckpt = 5
+    nn = NeuralNetwork(game, SENet, cuda=True)
+    nn.load(ckpt)
     
     # HumanPlayer(game),
     # UninformedMCTSPlayer(game, simulations=1000)
     # DeepMCTSPlayer(game, nn, simulations=50)
     
-    players = [HumanPlayer(game), HumanPlayer(game),UninformedMCTSPlayer(game, simulations=3000)]
+    #players = [HumanPlayer(game), HumanPlayer(game),UninformedMCTSPlayer(game, simulations=3000)]
+    #players = [HumanPlayer(game), UninformedMCTSPlayer(game, simulations=50)]
+    players = [HumanPlayer(game), DeepMCTSPlayer(game, nn, simulations=50)]
     for _ in range(1):
         play_match(game, players, verbose=True, permute=True)
     

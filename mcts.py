@@ -27,12 +27,15 @@ class MCTS():
     # With the fix, priors (P) can be factored in immediately during selection and expansion.
     # This makes the search more efficient, given there are strong priors.
     def simulate(self, s, cpuct=1, epsilon_fix=True):
+        #print('iteration')
         hashed_s = self.np_hash(s) # Key for state in dictionary
         current_player = self.game.get_player(s)
         if hashed_s in self.tree: # Not at leaf; select.
             stats = self.tree[hashed_s]
             N, Q, P = stats[:,1], stats[:,2], stats[:,3]
+            #print(f"N={N}, Q={Q}, P={P}")
             U = cpuct*P*math.sqrt(N.sum() + (1e-6 if epsilon_fix else 0))/(1 + N)
+            #print(f"U={U}")
             heuristic = Q + U
             best_a_idx = np.argmax(heuristic)
             best_a = stats[best_a_idx, 0] # Pick best action to take
@@ -41,12 +44,15 @@ class MCTS():
             s_prime = self.game.take_action(s, template)
             scores = self.simulate(s_prime) # Forward simulate with this action
             n, q = N[best_a_idx], Q[best_a_idx]
+            #print(f"n={n}, q={q}")
             v = scores[current_player] # Index in to find our reward
+            #print(f"v={v}")
             stats[best_a_idx, 2] = (n*q+v)/(n + 1)
             stats[best_a_idx, 1] += 1
             return scores
 
         else: # Expand
+            #print('expanding')
             scores = self.game.check_game_over(s)
             if scores is not None: # Reached a terminal node
                 return scores

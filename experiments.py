@@ -2,6 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+#from collections import Counter
 from models.senet import SENet
 from neural_network import NeuralNetwork
 from games.tictactoe import TicTacToe
@@ -14,12 +15,18 @@ from play import play_match
 # Evaluate the outcome of playing a checkpoint against an uninformed MCTS agent
 def evaluate_against_uninformed(checkpoint, game, model_class, my_sims, opponent_sims, cuda=False):
     my_model = NeuralNetwork(game, model_class, cuda=cuda)
-    my_model.load(checkpoint)
+    if checkpoint >= 0:
+        my_model.load(checkpoint)
     num_opponents = game.get_num_players() - 1
     uninformeds = [UninformedMCTSPlayer(game, opponent_sims) for _ in range(num_opponents)]
     informed = DeepMCTSPlayer(game, my_model, my_sims)
+    #score_counter = Counter()
+    # TODO: use multi-threading or don't do at all. It appears there is no randomness in these matches.
+    #for _ in range(20):
     scores = play_match(game, [informed] + uninformeds, permute=True)
+    #    score_counter[scores[0]] += 1
     print("Opponent strength: {}     Scores: {}".format(opponent_sims, scores))
+    #print("Opponent strength: {} Results: {}".format(opponent_sims, str(score_counter)))
 
 
 # Tracks the current best checkpoint across all checkpoints

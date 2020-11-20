@@ -43,7 +43,14 @@ else:
     iteration = 0
 
 # Training loop
-while True:
+# What do we have here? Why is it infinite? Did they only want to stop training manually and just loop indefinitely otherwise?
+#while True:
+iterations = int(config["num_iterations"])
+print(f"iterations={iterations}")
+for opponent_strength in [640, 1280]:
+    evaluate_against_uninformed(checkpoint=-1, game=game, model_class=model_class,
+        my_sims=sims, opponent_sims=opponent_strength, cuda=cuda)
+for i in range(iterations):
 
     # Run multiple policy iterations to develop a checkpoint.
     for _ in range(config["ckpt_frequency"]):
@@ -57,6 +64,7 @@ while True:
 
     # Evaluate how the current checkpoint performs against MCTS agents of increasing strength
     # that do no use a heursitic.
-    for opponent_strength in [10, 20, 40, 80, 160, 320, 640, 1280]:
+    #for opponent_strength in [10, 20, 40, 80, 160, 320, 640, 1280]:
+    for opponent_strength in [640, 1280]:
         evaluate_against_uninformed(checkpoint=iteration, game=game, model_class=model_class,
             my_sims=sims, opponent_sims=opponent_strength, cuda=cuda)

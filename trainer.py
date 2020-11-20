@@ -28,6 +28,7 @@ class Trainer:
         tree = MCTS(self.game, self.nn)
 
         data = []
+        game_log = []
         scores = self.game.check_game_over(s)
         root = True
         alpha = 1
@@ -52,6 +53,7 @@ class Trainer:
             # Sample an action
             idx = np.random.choice(len(dist), p=dist[:,1].astype(np.float))
             a = tuple(dist[idx, 0])
+            game_log.append(a)
 
             # Apply action
             available = self.game.get_available_actions(s)
@@ -62,9 +64,17 @@ class Trainer:
             # Check scores
             scores = self.game.check_game_over(s)
 
+        # Print game log
+        print(game_log)
+
         # Update training examples with outcome
         for i, _ in enumerate(data):
             data[i][-1] = scores
+
+        # TODO: Remove
+        #tmp = np.array(data)
+        #print(f"data dimensions: {tmp.shape}")
+        #print(tmp)
 
         return np.array(data)
 
@@ -72,6 +82,7 @@ class Trainer:
     # Performs one iteration of policy improvement.
     # Creates some number of games, then updates network parameters some number of times from that training data.
     def policy_iteration(self, verbose=False):
+        #print("num_games={}".format(self.num_games))
         temperature = 1   
 
         if verbose:

@@ -1,0 +1,3 @@
+In the middle of creating both an add_money in place and one that creates a copy of the array and returns it.
+ - Fix tests
+ - Will be used by Festival and Treasure cards
