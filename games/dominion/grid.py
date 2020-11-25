@@ -35,6 +35,19 @@ def fill_victory_grid():
 # Victory grid
 VICTORY_GRID = fill_victory_grid()
 
+def fill_treasure_mask():
+    tmask = np.ones((CARD_ROWS, CARD_COLS), dtype=bool)
+    for coord, card in CARD_MAP.items():
+        if card.is_treasure():
+            tmask[coord] = False
+    return tmask
+
+TREASURE_MASK = fill_treasure_mask()
+
+def all_treasures_played(s, p):
+    masked = np.ma.masked_array(s[:,:,HAND+p], TREASURE_MASK)
+    return masked.sum() == 0
+
 def score_deck(d):
     return int((d * VICTORY_GRID).sum())
 
