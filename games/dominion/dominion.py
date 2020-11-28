@@ -45,6 +45,7 @@ class Dominion(Game):
                 elif card.is_treasure():
                     s = card.play_treasure(s, p)
             # Check if we transition out of play phase
+            # Create function for this
             if s[ACTION_PHASE][TURN_STATE] == 1 and (coord == PASS_COORD or s[ACTION_COORD][TURN_STATE] < CARD_WEIGHT*.5):
                 s[ACTION_PHASE][TURN_STATE] = 0
                 s[TREASURE_PHASE][TURN_STATE] = 1
@@ -53,8 +54,20 @@ class Dominion(Game):
                 s[BUY_PHASE][TURN_STATE] = 1
         elif level == BUY_CARD:
             # move card from supply to deck and discard
-            # reduce buys and money
-            pass
+            if coord != PASS_COORD:
+                card = CARD_MAP[coord]
+                # reduce buys and money
+                subtract_money(card.get_cost())
+                decrement_buys(s, p)
+                # Adjust supply and discard pile
+                gain_card(s, coord, p)
+                place_in_discard(s, coord, p)
+            if coord == PASS_COORD or no_buys_left(s):
+                # cleanup
+                discard_hand(s, p)
+                discard_in_play(s, p)
+                draw_new_hand(s, p)
+                # change player and state
         elif level == SELECT_CARD:
             pass
         else:

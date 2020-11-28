@@ -52,4 +52,29 @@ def score_deck(d):
     return int((d * VICTORY_GRID).sum())
 
 
+def gain_card(s, coord, p):
+    """Change the state by adding one copy of card at coord to player p's deck"""
+    if s[coord][SUPPLY] > 0:
+        s[coord][SUPPLY] -= CARD_WEIGHT
+        if s[coord][SUPPLY] <= 0:
+            s[coord][SUPPLY] = EMPTY
+        s[coord][DECK+p] += CARD_WEIGHT
+
+def place_in_discard(s, coord, p):
+    """Add this card to player p's discard. Assumes removal from elsewhere is taken care of."""
+    s[coord][DISCARD+p] += CARD_WEIGHT
+
+def decrement_buys(s):
+    """Decrease buys in turn state by one"""
+    if s[BUY_COORD][TURN_STATE] > 0:
+        s[BUY_COORD][TURN_STATE] -= BUY_WEIGHT
+
+def no_buys_left(s):
+    """Returns true if number of buys is zero or false otherwise"""
+    return s[BUY_COORD][TURN_STATE] <= 0
+
+def discard_hand(s, p):
+    """Move all cards from hand to discard pile"""
+    s[:,:,DISCARD+p] += s[:,:,HAND+p]
+    s[:,:,HAND+p] = 0
 

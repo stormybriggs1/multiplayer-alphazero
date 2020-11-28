@@ -8,6 +8,7 @@ CARD_WEIGHT = 0.1
 ACTION_WEIGHT = 0.1
 BUY_WEIGHT = 0.1
 MONEY_WEIGHT = 0.1
+EMPTY = -1
 
 # State Levels
 PLAYER_OFFSETS = [0,1]
@@ -139,7 +140,7 @@ def decrement_buys(s, inplace=False):
     if not inplace:
         return s
 
-def all_treasures_played(s, p):
+def gain_card(s, coord, p, inplace=False):
     return None
 
 

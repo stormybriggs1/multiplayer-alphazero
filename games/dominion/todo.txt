@@ -1,3 +1,7 @@
-In the middle of creating both an add_money in place and one that creates a copy of the array and returns it.
- - Fix tests
- - Will be used by Festival and Treasure cards
+ - Make sure that alterations to the state object are all within a single file.
+   - In a Java world the state object would be private and we woudl secure it that way. Not so possible here.
+ - Write in gain_card method
+ - write up all_treasures_played
+ - Finish action section (treasures, buying) + tests
+ - Work towards being able to play a game aginst uninformed
+  
