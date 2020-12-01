@@ -51,34 +51,6 @@ BUY_CARD = 1
 SELECT_CARD = 2
 ACTION_LEVELS = 3
 
-def fill_supply(s):
-    # 8 Cards in each victory pile
-    for coord in [PROVINCE_COORD, DUCHY_COORD, ESTATE_COORDS[0]]:
-        s[coord][SUPPLY] = 8 * CARD_WEIGHT
-    # 3 estates in each players deck
-    for p in PLAYER_OFFSETS:
-        s[ESTATE_COORDS[0]][DECK+p] = 3 * CARD_WEIGHT
-        s[COPPER_COORDS[0]][DECK+p] = 7 * CARD_WEIGHT
-    # 10 curses
-    s[CURSES_COORD][SUPPLY] = 10 * CARD_WEIGHT
-    # 30 gold
-    for coord in GOLD_COORDS:
-        s[coord][SUPPLY] = 10 * CARD_WEIGHT
-    # 40 silver
-    for coord in SILVER_COORDS:
-        s[coord][SUPPLY] = 10 * CARD_WEIGHT
-    # 46 copper in supply
-    copper = 46
-    for coord in COPPER_COORDS:
-        if copper >= 10:
-            s[coord][SUPPLY] = 10 * CARD_WEIGHT
-            copper -= 10
-        else:
-            s[coord][SUPPLY] = copper * CARD_WEIGHT
-            copper = 0
-
-    return s
-
 def add_money(s, amount, inplace=False):
     if not inplace:
         s = np.copy(s)

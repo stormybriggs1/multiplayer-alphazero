@@ -29,14 +29,15 @@ class Dominion(Game):
         assert len(raw[0]) == 1
         coord = (raw[0][0], raw[1][0])
         level = raw[2][0]
-        p = int(s[CURRENT_PLAYER][TURN_STATE])
+        p = self.get_player(s)
         if level == PLAY_ACTION:
             if coord != PASS_COORD:
                 # obtain action card object
                 card = CARD_MAP[coord]
                 # move card from hand to play area
-                s[coord][HAND+p] -= CARD_WEIGHT
-                s[coord][PLAY_AREA+p] += CARD_WEIGHT
+                print(f"before: {s[COPPER_COORDS[0]][HAND+p]}")
+                from_hand_to_play(s, p)
+                print(f"after : {s[COPPER_COORDS[0]][HAND+p]}")
                 if card.is_action():
                     # adjust action count
                     decrement_actions(s, inplace=True)
@@ -46,12 +47,10 @@ class Dominion(Game):
                     s = card.play_treasure(s, p)
             # Check if we transition out of play phase
             # Create function for this
-            if s[ACTION_PHASE][TURN_STATE] == 1 and (coord == PASS_COORD or s[ACTION_COORD][TURN_STATE] < CARD_WEIGHT*.5):
-                s[ACTION_PHASE][TURN_STATE] = 0
-                s[TREASURE_PHASE][TURN_STATE] = 1
-            elif s[TREASURE_PHASE][TURN_STATE] == 1 and (coord == PASS_COORD or all_treasures_played(s, p)):
-                s[TREASURE_PHASE][TURN_STATE] = 0
-                s[BUY_PHASE][TURN_STATE] = 1
+            if is_action_phase(s) and (coord == PASS_COORD or not is_action_phase(s)):
+                end_action_phase(s)
+            elif is_treasure_phase(s) and (coord == PASS_COORD or all_treasures_played(s, p)):
+                end_treasure_phase(s)
         elif level == BUY_CARD:
             # move card from supply to deck and discard
             if coord != PASS_COORD:
@@ -68,6 +67,7 @@ class Dominion(Game):
                 discard_in_play(s, p)
                 draw_new_hand(s, p)
                 # change player and state
+                end_turn(s)
         elif level == SELECT_CARD:
             pass
         else:
@@ -100,7 +100,7 @@ class Dominion(Game):
 
     def get_player(self, s):
         """Return which player is up to take a turn"""
-        return s[CURRENT_PLAYER][TURN_STATE]
+        return int(s[CURRENT_PLAYER][TURN_STATE])
 
     def get_num_players(self):
     # For now lets only consider 2 player def get_num_players(self):
